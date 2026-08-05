@@ -7,12 +7,13 @@ import (
 )
 
 type Trigger struct {
-	Type        string              `json:"type" yaml:"type"`
-	Periodic    *PeriodicTrigger    `json:"periodic" yaml:"periodic,omitempty"`
-	Webhook     *WebhookTrigger     `json:"webhook" yaml:"webhook,omitempty"`
-	Block       *BlockTrigger       `json:"block" yaml:"block,omitempty"`
-	Transaction *TransactionTrigger `json:"transaction" yaml:"transaction,omitempty"`
-	Alert       *AlertTrigger       `json:"alert" yaml:"alert,omitempty"`
+	Type              string                    `json:"type" yaml:"type"`
+	Periodic          *PeriodicTrigger          `json:"periodic" yaml:"periodic,omitempty"`
+	Webhook           *WebhookTrigger           `json:"webhook" yaml:"webhook,omitempty"`
+	Block             *BlockTrigger             `json:"block" yaml:"block,omitempty"`
+	Transaction       *TransactionTrigger       `json:"transaction" yaml:"transaction,omitempty"`
+	Alert             *AlertTrigger             `json:"alert" yaml:"alert,omitempty"`
+	TransactionSimple *TransactionSimpleTrigger `json:"transactionsimple" yaml:"transactionsimple,omitempty"`
 }
 
 func (a Trigger) Validate(ctx ValidatorContext) (response ValidateResponse) {
@@ -56,6 +57,11 @@ func (a Trigger) Validate(ctx ValidatorContext) (response ValidateResponse) {
 			return response
 		}
 		return response.Merge(a.Alert.Validate(ctx.With(a.Type)))
+	case TransactionSimpleType:
+		if a.TransactionSimple == nil {
+			return response
+		}
+		return response.Merge(a.TransactionSimple.Validate(ctx.With(a.Type)))
 	}
 
 	panic("Unhandled type in Trigger Validate")
@@ -82,6 +88,10 @@ func (a Trigger) ToRequest() *actions.Trigger {
 		val := a.Alert.ToRequest()
 		return &val
 	}
+	if a.TransactionSimple != nil {
+		val := a.TransactionSimple.ToRequest()
+		return &val
+	}
 	return nil
 }
 
@@ -97,6 +107,8 @@ func (a Trigger) ToRequestType() actions.TriggerType {
 		return actions.New_TriggerType(actions.TriggerType_TRANSACTION)
 	case AlertType:
 		return actions.New_TriggerType(actions.TriggerType_ALERT)
+	case TransactionSimpleType:
+		return actions.New_TriggerType(actions.TriggerType_TRANSACTIONSIMPLE)
 	}
 	panic("unsupported trigger type")
 }

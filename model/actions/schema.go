@@ -180,8 +180,9 @@ func buildDefs() map[string]interface{} {
 		"PeriodicTrigger":    defPeriodicTrigger(),
 		"WebhookTrigger":     defWebhookTrigger(),
 		"BlockTrigger":       defBlockTrigger(),
-		"TransactionTrigger": defTransactionTrigger(),
-		"AlertTrigger":       defAlertTrigger(),
+		"TransactionTrigger":       defTransactionTrigger(),
+		"AlertTrigger":             defAlertTrigger(),
+		"TransactionSimpleTrigger": defTransactionSimpleTrigger(),
 
 		// Top-level
 		"TriggerUnparsed": defTriggerUnparsed(),
@@ -578,6 +579,13 @@ func defAlertTrigger() map[string]interface{} {
 	)
 }
 
+func defTransactionSimpleTrigger() map[string]interface{} {
+	return obj(
+		"type", "object",
+		"additionalProperties", false,
+	)
+}
+
 // --- Top-level definitions ---
 
 func defTriggerUnparsed() map[string]interface{} {
@@ -593,6 +601,7 @@ func defTriggerUnparsed() map[string]interface{} {
 			"block", refDef("BlockTrigger"),
 			"transaction", refDef("TransactionTrigger"),
 			"alert", refDef("AlertTrigger"),
+			"transactionsimple", refDef("TransactionSimpleTrigger"),
 		),
 		"required", arr("type"),
 		"allOf", arr(

@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+
+	"github.com/tenderly/tenderly-cli/rest/client"
 )
 
 var CurrentCLIVersion string
@@ -29,6 +31,12 @@ func SetCurrentCLIVersion(version string) {
 	if !strings.HasPrefix(CurrentCLIVersion, "v") {
 		CurrentCLIVersion = fmt.Sprintf("v%s", CurrentCLIVersion)
 	}
+
+	userAgentVersion := CurrentCLIVersion
+	if version == "" {
+		userAgentVersion = "dev"
+	}
+	client.SetUserAgent(fmt.Sprintf("tenderly-cli/%s", userAgentVersion))
 
 	CheckVersion(false, false)
 }

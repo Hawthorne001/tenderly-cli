@@ -21,6 +21,13 @@ const (
 	defaultApiBaseURL     = "https://api.tenderly.co"
 )
 
+var userAgent = "tenderly-cli"
+
+// SetUserAgent sets the User-Agent header value sent with every API request.
+func SetUserAgent(value string) {
+	userAgent = value
+}
+
 func Request(method, path string, body []byte) io.Reader {
 	apiBaseURL := resolveApiBaseURL()
 	requestURL := resolveRequestURL(apiBaseURL, path)
@@ -38,6 +45,8 @@ func Request(method, path string, body []byte) io.Reader {
 	}
 
 	ensureTLS()
+
+	req.Header.Set("User-Agent", userAgent)
 
 	if key := config.GetAccessKey(); key != "" {
 		// set access key

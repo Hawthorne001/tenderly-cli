@@ -40,10 +40,6 @@ type ActionRoutes interface {
 	Publish(request generatedActions.PublishRequest, projectSlug string) (*generatedActions.PublishResponse, error)
 }
 
-type DevNetRoutes interface {
-	SpawnRPC(accountID string, projectID string, templateSlug string, accessKey string, token string) (string, error)
-}
-
 type ExtensionRoutes interface {
 	DeployExtension(accountSlugOrID string, projectSlugOrID string, actionID string, gatewayID string, extensionName string, extensionMethodName string) (*payloads.DeployExtensionResponse, error)
 	GetExtensions(accountSlugOrID string, projectSlugOrID string, gatewayID string) (*payloads.GetExtensionsResponse, error)
@@ -60,7 +56,6 @@ type Rest struct {
 	Contract   ContractRoutes
 	Networks   NetworkRoutes
 	Actions    ActionRoutes
-	DevNet     DevNetRoutes
 	Gateways   GatewayRoutes
 	Extensions ExtensionRoutes
 }
@@ -72,7 +67,6 @@ func NewRest(
 	contract ContractRoutes,
 	networks NetworkRoutes,
 	actions ActionRoutes,
-	devnet DevNetRoutes,
 	gateways GatewayRoutes,
 	extensions ExtensionRoutes,
 ) *Rest {
@@ -83,7 +77,6 @@ func NewRest(
 		Contract:   contract,
 		Networks:   networks,
 		Actions:    actions,
-		DevNet:     devnet,
 		Gateways:   gateways,
 		Extensions: extensions,
 	}

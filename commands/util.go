@@ -33,7 +33,6 @@ func NewRest() *rest.Rest {
 		call.NewContractCalls(),
 		call.NewNetworkCalls(),
 		call.NewActionCalls(),
-		call.NewDevNetCalls(),
 		call.NewGatewayCalls(),
 		call.NewExtensionCalls(),
 	)

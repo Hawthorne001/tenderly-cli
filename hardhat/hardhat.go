@@ -21,7 +21,6 @@ func NewDeploymentProvider() *DeploymentProvider {
 		call.NewContractCalls(),
 		call.NewNetworkCalls(),
 		call.NewActionCalls(),
-		call.NewDevNetCalls(),
 		call.NewGatewayCalls(),
 		call.NewExtensionCalls(),
 	)

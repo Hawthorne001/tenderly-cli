@@ -132,19 +132,19 @@ func ParseSolcConfigWithOptimizer(compilers map[string]providers.Compiler) *Conf
 		payload.OptimizationsCount = compiler.Optimizer.Runs
 		if compiler.Optimizer.Details != nil {
 			payload.Details = &ConfigDetails{
-				Peephole:          compiler.Settings.Optimizer.Details.Peephole,
-				JumpdestRemover:   compiler.Settings.Optimizer.Details.JumpdestRemover,
-				OrderLiterals:     compiler.Settings.Optimizer.Details.OrderLiterals,
-				Deduplicate:       compiler.Settings.Optimizer.Details.Deduplicate,
-				Cse:               compiler.Settings.Optimizer.Details.Cse,
-				ConstantOptimizer: compiler.Settings.Optimizer.Details.ConstantOptimizer,
-				Yul:               compiler.Settings.Optimizer.Details.Yul,
-				Inliner:           compiler.Settings.Optimizer.Details.Inliner,
+				Peephole:          compiler.Optimizer.Details.Peephole,
+				JumpdestRemover:   compiler.Optimizer.Details.JumpdestRemover,
+				OrderLiterals:     compiler.Optimizer.Details.OrderLiterals,
+				Deduplicate:       compiler.Optimizer.Details.Deduplicate,
+				Cse:               compiler.Optimizer.Details.Cse,
+				ConstantOptimizer: compiler.Optimizer.Details.ConstantOptimizer,
+				Yul:               compiler.Optimizer.Details.Yul,
+				Inliner:           compiler.Optimizer.Details.Inliner,
 			}
 			if compiler.Optimizer.Details.YulDetails != nil {
 				payload.Details.YulDetails = &YulDetails{
-					StackAllocation: compiler.Settings.Optimizer.Details.YulDetails.StackAllocation,
-					OptimizerSteps:  compiler.Settings.Optimizer.Details.YulDetails.OptimizerSteps,
+					StackAllocation: compiler.Optimizer.Details.YulDetails.StackAllocation,
+					OptimizerSteps:  compiler.Optimizer.Details.YulDetails.OptimizerSteps,
 				}
 			}
 		}

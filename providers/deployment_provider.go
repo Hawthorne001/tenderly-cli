@@ -94,6 +94,7 @@ type CompilerSettings struct {
 	Remappings        []string                  `json:"remappings" yaml:"remappings"`
 	Optimizer         *Optimizer                `json:"optimizer"`
 	EvmVersion        *string                   `json:"evmVersion"`
+	ViaIR             *bool                     `json:"viaIR" yaml:"via_ir"`
 	Metadata          *CompilerSettingsMetadata `json:"metadata"`
 	CompilationTarget map[string]string         `json:"compilationTarget"`
 	Libraries         map[string]string         `json:"libraries"`
@@ -102,6 +103,7 @@ type CompilerSettings struct {
 type CompilerSettingsMetadata struct {
 	UseLiteralContent *bool   `json:"useLiteralContent"`
 	BytecodeHash      *string `json:"bytecodeHash"`
+	AppendCBOR        *bool   `json:"appendCBOR"`
 }
 
 type Optimizer struct {

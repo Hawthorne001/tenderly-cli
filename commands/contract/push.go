@@ -146,6 +146,11 @@ func uploadContracts(rest *rest.Rest) error {
 			}
 		}
 
+		if networkError := commands.CheckUnknownPushNetworks(rest, contracts); networkError != nil {
+			pushErrors[projectSlug] = networkError
+			continue
+		}
+
 		s := spinner.New(spinner.CharSets[33], 100*time.Millisecond)
 
 		s.Start()

@@ -125,11 +125,7 @@ var loginCmd = &cobra.Command{
 
 		WriteGlobalConfig()
 
-		DetectedProjectMessage(
-			true,
-			"initialize",
-			"cd %s; tenderly init",
-		)
+		LoginSuccessMessage()
 	},
 }
 

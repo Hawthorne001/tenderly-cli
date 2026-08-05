@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/tenderly/tenderly-cli/config"
-	"github.com/tenderly/tenderly-cli/providers"
-	"github.com/tenderly/tenderly-cli/truffle"
-	"github.com/tenderly/tenderly-cli/userError"
 	"os"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
+
+	"github.com/tenderly/tenderly-cli/config"
+	"github.com/tenderly/tenderly-cli/providers"
+	"github.com/tenderly/tenderly-cli/userError"
 )
 
 func CheckLogin() {
@@ -48,52 +48,10 @@ func WriteProjectConfig() {
 	}
 }
 
-func DetectedProjectMessage(
-	printLoginSuccess bool,
-	action string,
-	commandFmt string,
-) {
-	projectDirectories := truffle.FindDirectories()
-	projectsLen := len(projectDirectories)
-	if printLoginSuccess {
-		logrus.Info(Colorizer.Sprintf("Now that you are successfully logged in, you can use the %s command to initialize a new project.",
-			Colorizer.Bold(Colorizer.Green("tenderly init")),
-		))
-	}
-
-	if projectsLen == 0 {
-		return
-	}
-
-	format := fmt.Sprintf("\t%s", commandFmt)
-
-	projectWord := "project"
-	initializationSentence := Colorizer.Sprintf("You can %s it by running the following command:\n\n%s",
-		action,
-		Colorizer.Bold(fmt.Sprintf(format, projectDirectories[0])),
-	)
-	if projectsLen > 1 {
-		projectWord = "projects"
-		initializationSentence = fmt.Sprintf("You can %s them by running one of the following commands:", action)
-	}
-
-	logrus.Println()
-	logrus.Infof("We have detected %d Truffle %s on your system. %s",
-		projectsLen,
-		projectWord,
-		initializationSentence,
-	)
-	logrus.Println()
-
-	if len(projectDirectories) == 1 {
-		return
-	}
-
-	format = fmt.Sprintf("\t%s", commandFmt)
-	for _, project := range projectDirectories {
-		logrus.Info(Colorizer.Bold(fmt.Sprintf(format, project)))
-	}
-	logrus.Println()
+func LoginSuccessMessage() {
+	logrus.Info(Colorizer.Sprintf("Now that you are successfully logged in, you can use the %s command from your project directory to initialize a new project.",
+		Colorizer.Bold(Colorizer.Green("tenderly init")),
+	))
 }
 
 func WrongFolderMessage(action string, commandFmt string) {
@@ -107,12 +65,6 @@ func WrongFolderMessage(action string, commandFmt string) {
 		"If you think this is the case, rerun this command with the %s flag.",
 		Colorizer.Bold(Colorizer.Green("--force")),
 	))
-
-	DetectedProjectMessage(
-		false,
-		action,
-		commandFmt,
-	)
 }
 
 type ProjectConfiguration struct {

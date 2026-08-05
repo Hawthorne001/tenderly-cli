@@ -202,9 +202,14 @@ func WriteProjectConfig() error {
 		}
 
 		err = projectConfig.WriteConfig()
+		if err != nil {
+			return fmt.Errorf("failed writing project configuration file: %s", err)
+		}
+
+		return nil
 	}
 
-	return nil
+	return err
 }
 
 func SetGlobalConfig(key string, value interface{}) {
@@ -231,9 +236,14 @@ func WriteGlobalConfig() error {
 		}
 
 		err = globalConfig.WriteConfig()
+		if err != nil {
+			return fmt.Errorf("failed writing global configuration file: %s", err)
+		}
+
+		return nil
 	}
 
-	return nil
+	return err
 }
 
 // ReadProjectConfig is necessary because viper reader doesn't respect custom unmarshaler

@@ -95,6 +95,7 @@ func GetGlobalPathForModule(localPath string) string {
 	doesNotExist := CheckIfFileDoesNotExist(absPath)
 	if doesNotExist {
 		// global path - yarn
+		out.Reset()
 		cmd = exec.Command("yarn", "global", "dir")
 		cmd.Stdout = &out
 		err := cmd.Run()

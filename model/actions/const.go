@@ -7,21 +7,21 @@ import (
 )
 
 var (
-	RuntimeV1          = "v1"
-	RuntimeV2          = "v2"
-	SupportedRuntimes  = []string{RuntimeV1, RuntimeV2}
-	TriggerTypes          = []string{"periodic", "webhook", "block", "transaction", "alert", "transactionsimple"}
-	PeriodicType          = "periodic"
-	WebhookType           = "webhook"
-	BlockType             = "block"
-	TransactionType       = "transaction"
-	AlertType             = "alert"
-	TransactionSimpleType = "transactionsimple"
+	RuntimeV1              = "v1"
+	RuntimeV2              = "v2"
+	SupportedRuntimes      = []string{RuntimeV1, RuntimeV2}
+	TriggerTypes           = []string{"periodic", "webhook", "block", "transaction", "alert", "transactionsimple"}
+	PeriodicType           = "periodic"
+	WebhookType            = "webhook"
+	BlockType              = "block"
+	TransactionType        = "transaction"
+	AlertType              = "alert"
+	TransactionSimpleType  = "transactionsimple"
 	TransactionFilterTypes = []string{"from", "to", "function", "eventEmitted", "logEmitted", "ethBalance", "stateChanged"}
-	Invocations           = []string{"any", "direct", "internal"}
-	InvocationAny      = "any"
-	InvocationDirect   = "direct"
-	InvocationInternal = "internal"
+	Invocations            = []string{"any", "direct", "internal"}
+	InvocationAny          = "any"
+	InvocationDirect       = "direct"
+	InvocationInternal     = "internal"
 
 	Intervals      = []string{"5m", "10m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"}
 	IntervalToCron = map[string]string{
@@ -82,10 +82,10 @@ var (
 	MsgStartsWithInvalid                   = "'startsWith' element must be hex encoded and start with 0x"
 	MsgHexValueEmpty                       = "expected non-empty hex value"
 	MsgHexValueInvalid                     = "hex value must start with 0x, got %s"
-	MsgMinFilterConstraint                = "constraint for minimum transaction filters must be fulfilled"
-	MsgAddressRequired                    = "'address' is required"
-	MsgBigIntNoConditionSet               = "must have at least one condition set (gte, lte, eq, gt, lt)"
-	MsgBigIntValueInvalid                 = "value '%s' must be a valid integer (decimal or 0x-prefixed hex)"
-	MsgStateChangedParamConditionRequired = "at least one of 'change', 'valueCmp', 'percentageCmp', 'storageSlotKey' is required"
-	MsgParamNameRequired                  = "'name' is required for parameter condition"
+	MsgMinFilterConstraint                 = "constraint for minimum transaction filters must be fulfilled"
+	MsgAddressRequired                     = "'address' is required"
+	MsgBigIntNoConditionSet                = "must have at least one condition set (gte, lte, eq, gt, lt)"
+	MsgBigIntValueInvalid                  = "value '%s' must be a valid integer (decimal or 0x-prefixed hex)"
+	MsgStateChangedParamConditionRequired  = "at least one of 'change', 'valueCmp', 'percentageCmp', 'storageSlotKey' is required"
+	MsgParamNameRequired                   = "'name' is required for parameter condition"
 )

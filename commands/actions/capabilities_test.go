@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	actionsModel "github.com/tenderly/tenderly-cli/model/actions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	actionsModel "github.com/tenderly/tenderly-cli/model/actions"
 )
 
 func TestCapabilitiesOutput_JSONShape(t *testing.T) {

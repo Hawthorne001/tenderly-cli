@@ -198,7 +198,7 @@ func (e *EthBalanceField) UnmarshalJSON(bytes []byte) error {
 type FunctionValue struct {
 	Contract *ContractValue `yaml:"contract" json:"contract"`
 	// Exactly one of
-	Signature  *SignatureValue       `yaml:"signature" json:"signature"`
+	Signature  *SignatureValue      `yaml:"signature" json:"signature"`
 	Name       *string              `yaml:"name" json:"name"`
 	Parameters []ParameterCondValue `yaml:"parameters" json:"parameters,omitempty"`
 	Not        bool                 `yaml:"not" json:"not,omitempty"`
@@ -354,8 +354,8 @@ func (p *ParameterCondValue) ToRequest() actions.ParameterCondition {
 type EventEmittedValue struct {
 	Contract *ContractValue `yaml:"contract" json:"contract"`
 	// Exactly one of
-	Id   *string `yaml:"id" json:"id"`
-	Name *string `yaml:"name" json:"name"`
+	Id         *string              `yaml:"id" json:"id"`
+	Name       *string              `yaml:"name" json:"name"`
 	Parameters []ParameterCondValue `yaml:"parameters" json:"parameters,omitempty"`
 	Not        bool                 `yaml:"not" json:"not,omitempty"`
 }

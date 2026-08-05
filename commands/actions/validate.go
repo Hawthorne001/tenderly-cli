@@ -42,7 +42,7 @@ var validateCmd = &cobra.Command{
 
 type validateOutput struct {
 	Valid         bool                 `json:"valid"`
-	SchemaErrors []string             `json:"schema_errors,omitempty"`
+	SchemaErrors  []string             `json:"schema_errors,omitempty"`
 	TriggerErrors []triggerErrorOutput `json:"trigger_errors,omitempty"`
 }
 

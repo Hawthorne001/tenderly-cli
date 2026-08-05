@@ -68,6 +68,9 @@ func CheckVersion(force bool, encounteredError bool) {
 	versionAlreadyChecked = true
 
 	response, err := http.Get("https://api.github.com/repos/tenderly/tenderly-cli/releases")
+	if response != nil {
+		defer response.Body.Close()
+	}
 
 	if err != nil || (response != nil && response.StatusCode != 200) {
 		if force {
@@ -82,8 +85,6 @@ func CheckVersion(force bool, encounteredError bool) {
 		}
 		return
 	}
-
-	defer response.Body.Close()
 
 	contents, err := io.ReadAll(response.Body)
 	if err != nil {

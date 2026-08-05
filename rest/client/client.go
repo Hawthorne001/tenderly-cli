@@ -30,6 +30,16 @@ func SetUserAgent(value string) {
 	userAgent = value
 }
 
+// UserAgent returns the configured User-Agent header value.
+func UserAgent() string {
+	return userAgent
+}
+
+// ApiBaseURL returns the configured API base URL.
+func ApiBaseURL() string {
+	return resolveApiBaseURL()
+}
+
 func Request(method, path string, body []byte) io.Reader {
 	apiBaseURL := resolveApiBaseURL()
 	requestURL := resolveRequestURL(apiBaseURL, path)

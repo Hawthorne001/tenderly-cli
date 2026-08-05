@@ -18,6 +18,7 @@ import (
 
 const (
 	sessionLimitErrorSlug = "session_limit_exceeded"
+	quotaLimitReachedSlug = "quota_limit_reached"
 	defaultApiBaseURL     = "https://api.tenderly.co"
 )
 
@@ -76,8 +77,8 @@ func Request(method, path string, body []byte) io.Reader {
 				var tokenResp payloads.TokenResponse
 				err := json.NewDecoder(reader).Decode(&tokenResp)
 
-				if err != nil || tokenResp.Error != nil {
-					if tokenResp.Error.Slug == sessionLimitErrorSlug {
+				if err != nil || tokenResp.Error != nil || tokenResp.Token == "" {
+					if tokenResp.Error != nil && tokenResp.Error.Slug == sessionLimitErrorSlug {
 						config.SetGlobalConfig(config.Token, "")
 						err = config.WriteGlobalConfig()
 						if err != nil {
@@ -95,25 +96,25 @@ func Request(method, path string, body []byte) io.Reader {
 						os.Exit(1)
 					}
 
-					logrus.Debug("failed creating token, user has been logged out")
+					logrus.Debug("failed creating access token, continuing with token authentication")
+				} else {
+					config.SetGlobalConfig(config.AccessKey, tokenResp.Token)
+					config.SetGlobalConfig(config.AccessKeyId, tokenResp.ID)
+
+					//@TODO(filip): remove this once we
+					err = config.WriteGlobalConfig()
+					if err != nil {
+						userError.LogErrorf(
+							"write global config: %s",
+							userError.NewUserError(err, "Couldn't write global config file"),
+						)
+
+						return nil
+					}
+
+					req.Header.Add("x-access-key", tokenResp.Token)
+					req.Header.Del("Authorization")
 				}
-
-				config.SetGlobalConfig(config.AccessKey, tokenResp.Token)
-				config.SetGlobalConfig(config.AccessKeyId, tokenResp.ID)
-
-				//@TODO(filip): remove this once we
-				err = config.WriteGlobalConfig()
-				if err != nil {
-					userError.LogErrorf(
-						"write global config: %s",
-						userError.NewUserError(err, "Couldn't write global config file"),
-					)
-
-					return nil
-				}
-
-				req.Header.Add("x-access-key", tokenResp.Token)
-				req.Header.Del("Authorization")
 			}
 		}
 	}
@@ -155,33 +156,54 @@ func Request(method, path string, body []byte) io.Reader {
 
 // handleResponseStatus handles the response status code.
 func handleResponseStatus(res *http.Response, resBodyData []byte, err error) {
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		if res.StatusCode >= 500 {
-			userError.LogErrorf("request failed: %s", userError.NewUserError(
-				err,
-				fmt.Sprintf(
-					"The request failed with a status code of %d and status message '%s'. Please try again.",
-					res.StatusCode,
-					res.Status,
-				),
-			))
-		} else {
-			userError.LogErrorf("request failed: %s", userError.NewUserError(
-				err,
-				fmt.Sprintf(
-					"The request failed with a status code of %d and message '%s'",
-					res.StatusCode,
-					extractErrorMessage(resBodyData, res.Status),
-				),
-			))
-		}
+	if res.StatusCode >= 200 && res.StatusCode < 300 {
+		return
+	}
+
+	slug, message := extractApiError(resBodyData, res.Status)
+
+	if slug == quotaLimitReachedSlug && isAccessTokenRequest(res.Request) {
+		userError.LogErrorf("access token creation failed: %s", userError.NewUserError(
+			fmt.Errorf("access token creation failed: %s", message),
+			"Couldn't create a CLI access token because your plan doesn't include this operation.\n"+
+				"Log in with an access key instead: tenderly login --authentication-method access-key "+
+				"(generate a key at https://dashboard.tenderly.co/account/authorization), or upgrade your plan.",
+		))
 		os.Exit(1)
 	}
+
+	if res.StatusCode >= 500 {
+		userError.LogErrorf("request failed: %s", userError.NewUserError(
+			err,
+			fmt.Sprintf(
+				"The request failed with a status code of %d and status message '%s'. Please try again.",
+				res.StatusCode,
+				res.Status,
+			),
+		))
+	} else {
+		userError.LogErrorf("request failed: %s", userError.NewUserError(
+			err,
+			fmt.Sprintf(
+				"The request failed with a status code of %d and message '%s'",
+				res.StatusCode,
+				message,
+			),
+		))
+	}
+	os.Exit(1)
 }
 
-// extractErrorMessage tries to extract an error message from the (JSON) response body.
-// Falls back to the HTTP status if the response is not valid JSON or has no error message.
-func extractErrorMessage(resBodyData []byte, status string) string {
+// isAccessTokenRequest reports whether the request is the implicit CLI
+// access-token creation call.
+func isAccessTokenRequest(req *http.Request) bool {
+	return req != nil && req.Method == "POST" && strings.HasSuffix(req.URL.Path, "/token")
+}
+
+// extractApiError tries to extract the error slug and message from the (JSON)
+// response body. The message falls back to the HTTP status if the response is
+// not valid JSON or has no error message.
+func extractApiError(resBodyData []byte, status string) (slug string, message string) {
 	var errorResp struct {
 		Error struct {
 			ID      string                 `json:"id"`
@@ -192,10 +214,10 @@ func extractErrorMessage(resBodyData []byte, status string) string {
 	}
 
 	if json.Unmarshal(resBodyData, &errorResp) == nil && errorResp.Error.Message != "" {
-		return errorResp.Error.Message
+		return errorResp.Error.Slug, errorResp.Error.Message
 	}
 
-	return status
+	return "", status
 }
 
 // ensureTLS configures the default http transport to use TLS.

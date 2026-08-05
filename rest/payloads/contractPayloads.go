@@ -23,7 +23,8 @@ type GetContractsResponse struct {
 }
 
 type RemoveContractsRequest struct {
-	ContractIDs []string `json:"account_ids"`
+	// ContractIDs are in the "eth:{networkID}:{address}" format.
+	ContractIDs []string `json:"contract_ids"`
 }
 
 type RemoveContractsResponse struct {

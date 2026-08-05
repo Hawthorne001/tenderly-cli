@@ -3,6 +3,7 @@ package call
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/tenderly/tenderly-cli/config"
@@ -87,15 +88,23 @@ func (rest *ContractCalls) RemoveContracts(request payloads.RemoveContractsReque
 		return nil, err
 	}
 
+	accountID := config.GetGlobalString(config.AccountID)
+	if strings.Contains(projectSlug, "/") {
+		projectInfo := strings.Split(projectSlug, "/")
+		accountID = projectInfo[0]
+		projectSlug = projectInfo[1]
+	}
+
 	response := client.Request(
 		"DELETE",
-		fmt.Sprintf("api/v1/account/me/project/%s/contracts", projectSlug),
+		fmt.Sprintf("api/v1/account/%s/project/%s/web3-account/contracts", accountID, projectSlug),
 		removeJson,
 	)
 
+	// A successful removal returns an empty body.
 	var res payloads.RemoveContractsResponse
 	err = json.NewDecoder(response).Decode(&res)
-	if err.Error() == "EOF" {
+	if err == io.EOF {
 		return nil, nil
 	}
 
@@ -119,7 +128,7 @@ func (rest *ContractCalls) RenameContract(
 
 	var res payloads.RenameContractResponse
 	err = json.NewDecoder(response).Decode(&res)
-	if err.Error() == "EOF" {
+	if err == io.EOF {
 		return nil, nil
 	}
 

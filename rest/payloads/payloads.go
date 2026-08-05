@@ -1,10 +1,14 @@
 package payloads
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type ApiError struct {
-	Message string `json:"message"`
-	Slug    string `json:"slug,omitempty"`
+	Message string          `json:"message"`
+	Slug    string          `json:"slug,omitempty"`
+	Data    json.RawMessage `json:"data,omitempty"`
 }
 
 func (a *ApiError) Error() string {

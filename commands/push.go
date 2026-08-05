@@ -181,7 +181,7 @@ func uploadContracts(rest *rest.Rest) error {
 		if response.Error != nil {
 			pushErrors[projectSlug] = userError.NewUserError(
 				fmt.Errorf("api error uploading contracts: %s", response.Error.Slug),
-				response.Error.Message,
+				ContractErrorMessage(response.Error),
 			)
 			continue
 		}

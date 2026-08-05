@@ -138,7 +138,7 @@ func verifyContracts(rest *rest.Rest) error {
 	if response.Error != nil {
 		return userError.NewUserError(
 			fmt.Errorf("api error uploading contracts: %s", response.Error.Slug),
-			response.Error.Message,
+			commands.ContractErrorMessage(response.Error),
 		)
 	}
 

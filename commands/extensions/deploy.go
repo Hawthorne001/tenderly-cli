@@ -249,8 +249,10 @@ func getGateway(accountSlug, projectSlug string) (*gatewaysModel.Gateway, error)
 
 	gateways := []gatewaysModel.Gateway(*getGatewaysResponse)
 
-	if gateways == nil || len(gateways) == 0 {
-		return nil, errors.New("No gateway found for project \"" + accountSlug + "/" + projectSlug + "\".")
+	if len(gateways) == 0 {
+		return nil, errors.New("No gateway found for project \"" + accountSlug + "/" + projectSlug + "\". " +
+			"The project gateway is created when the project's first Node RPC endpoint is created. " +
+			"Create a Node RPC endpoint in the Tenderly dashboard (https://dashboard.tenderly.co) and run the deploy again.")
 	}
 
 	return &gateways[0], nil

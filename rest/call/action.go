@@ -21,6 +21,28 @@ type justErrorResponse struct {
 	Error *payloads.ApiError `json:"error"`
 }
 
+// actionApiError enriches known entitlement error slugs with guidance —
+// validate is not gated server-side, so a successful validate doesn't imply
+// publish/deploy will pass the billing and network-entitlement checks.
+func actionApiError(apiErr *payloads.ApiError) error {
+	switch apiErr.Slug {
+	case "quota_limit_reached":
+		return fmt.Errorf("%s (%s)\n"+
+			"Your current plan doesn't allow publishing or deploying actions. "+
+			"Upgrade your plan or contact support at support@tenderly.co.",
+			apiErr.Message, apiErr.Slug,
+		)
+	case "forbidden":
+		return fmt.Errorf("%s (%s)\n"+
+			"One of the networks used by this action's triggers isn't included in your plan. "+
+			"Check which networks your plan supports in the Tenderly dashboard.",
+			apiErr.Message, apiErr.Slug,
+		)
+	default:
+		return fmt.Errorf("%s (%s)", apiErr.Message, apiErr.Slug)
+	}
+}
+
 type maybeErrorResponse struct {
 	Error *payloads.ApiError `json:"error"`
 	Data  []byte
@@ -63,7 +85,7 @@ func (rest *ActionCalls) Validate(request actions2.ValidateRequest, projectSlug 
 
 	err = json.NewDecoder(response).Decode(&retOrError)
 	if err == nil && retOrError.Error != nil {
-		return nil, fmt.Errorf("%s (%s)", retOrError.Error.Message, retOrError.Error.Slug)
+		return nil, actionApiError(retOrError.Error)
 	}
 
 	err = json.Unmarshal(retOrError.Data, &ret)
@@ -98,7 +120,7 @@ func (rest *ActionCalls) Publish(request actions2.PublishRequest, projectSlug st
 
 	err = json.NewDecoder(response).Decode(&retOrError)
 	if err == nil && retOrError.Error != nil {
-		return nil, fmt.Errorf("%s (%s)", retOrError.Error.Message, retOrError.Error.Slug)
+		return nil, actionApiError(retOrError.Error)
 	}
 
 	err = json.Unmarshal(retOrError.Data, &ret)

@@ -19,6 +19,7 @@ import (
 const (
 	sessionLimitErrorSlug = "session_limit_exceeded"
 	quotaLimitReachedSlug = "quota_limit_reached"
+	forbiddenSlug         = "forbidden"
 	defaultApiBaseURL     = "https://api.tenderly.co"
 )
 
@@ -170,6 +171,20 @@ func handleResponseStatus(res *http.Response, resBodyData []byte, err error) {
 				"(generate a key at https://dashboard.tenderly.co/account/authorization), or upgrade your plan.",
 		))
 		os.Exit(1)
+	}
+
+	switch slug {
+	case quotaLimitReachedSlug:
+		message = fmt.Sprintf("%s\n"+
+			"Your current plan doesn't allow this operation. Upgrade your plan or contact support at support@tenderly.co.",
+			message,
+		)
+	case forbiddenSlug:
+		message = fmt.Sprintf("%s\n"+
+			"One of the networks in this request isn't included in your plan. "+
+			"Check which networks your plan supports in the Tenderly dashboard.",
+			message,
+		)
 	}
 
 	if res.StatusCode >= 500 {
